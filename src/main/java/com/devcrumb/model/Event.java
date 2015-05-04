@@ -1,13 +1,24 @@
 package com.devcrumb.model;
 
-import com.vividsolutions.jts.geom.Point;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.OneToMany;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
-import java.util.Date;
+import com.vividsolutions.jts.geom.Point;
 
 @Entity
+@NamedEntityGraph(name = "Event.detail", attributeNodes = @NamedAttributeNode("persons"))
 public class Event {
 
 	@Id
@@ -22,9 +33,9 @@ public class Event {
 	@Type(type = "org.hibernate.spatial.GeometryType")
 	private Point location;
 
-	public Event() {
-	}
-
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="event")
+    private List<Person> persons = new ArrayList<Person>();
+    
 	public Long getId() {
 		return id;
 	}
@@ -55,6 +66,14 @@ public class Event {
 
 	public void setLocation(Point location) {
 		this.location = location;
+	}
+	
+	public List<Person> getPersons() {
+		return persons;
+	}
+
+	public void setPersons(List<Person> persons) {
+		this.persons = persons;
 	}
 
 	@Override

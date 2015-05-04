@@ -3,6 +3,8 @@ package com.devcrumb.model;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * Person entity
@@ -17,6 +19,8 @@ public class Person {
 	private Long id;
 	private String name;
 	private String surname;
+	@ManyToOne @JoinColumn(name="EVENT_ID")
+	private Event event;
 
 	public Person() {
 	}
@@ -48,6 +52,14 @@ public class Person {
 
 	public void setSurname(String surname) {
 		this.surname = surname;
+	}
+
+	public Event getEvent() {
+		return event;
+	}
+
+	public void setEvent(Event event) {
+		this.event = event;
 	}
 
 	@Override

@@ -23,9 +23,15 @@ public class App {
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
 				"applicationContext.xml");
+		
 		EventDao eventDao = context.getBean(EventDao.class);
-		Event myEvent = createAndStoreEvent("My Event", new Date(), "POINT(10 5)");
-		eventDao.save(myEvent);
+		PersonDao personDao = context.getBean(PersonDao.class);
+		
+		Event event1 = createEvent("Event 1", new Date(), "POINT(10 5)");
+		Person person1 = new Person("John", "Doe");
+		person1.setEvent(event1);
+		event1.getPersons().add(person1);
+		Long storedEventId = eventDao.save(event1).getId();
 		
 		System.out.println("Count Event records: " + eventDao.count());
 		
@@ -33,46 +39,48 @@ public class App {
 		for (Event event : events) {
 			System.out.println(event);
 		}
+		/**
+		 * TODO Lazy 
+		 */
+		//Event storedEvent = eventDao.findOne(storedEventId);
+		//System.out.println(storedEvent.getPersons().get(0));
 		
-		
-		PersonDao dao = context.getBean(PersonDao.class);
-
 		Person peter = new Person("Peter", "Sagan");
 		Person nasta = new Person("Nasta", "Kuzminova");
 
 		// Add new Person records
-		dao.save(peter);
-		dao.save(nasta);
+		personDao.save(peter);
+		personDao.save(nasta);
 
 		// Count Person records
-		System.out.println("Count Person records: " + dao.count());
+		System.out.println("Count Person records: " + personDao.count());
 
 		// Print all records
-		List<Person> persons = (List<Person>) dao.findAll();
+		List<Person> persons = (List<Person>) personDao.findAll();
 		for (Person person : persons) {
 			System.out.println(person);
 		}
 
 		// Find Person by surname
-		System.out.println("Find by surname 'Sagan': "	+ dao.findBySurname("Sagan"));
+		System.out.println("Find by surname 'Sagan': "	+ personDao.findBySurname("Sagan"));
 
 		// Update Person
 		nasta.setName("Barbora");
 		nasta.setSurname("Spotakova");
-		dao.save(nasta);
+		personDao.save(nasta);
 
-		System.out.println("Find by id 2: " + dao.findOne(2L));
+		System.out.println("Find by id 2: " + personDao.findOne(2L));
 
 		// Remove record from Person
-		dao.delete(2L);
+		personDao.delete(2L);
 
 		// And finally count records
-		System.out.println("Count Person records: " + dao.count());
+		System.out.println("Count Person records: " + personDao.count());
 
 		context.close();
 	}
 	
-	private static Event createAndStoreEvent(String title, Date theDate, String wktPoint) {
+	private static Event createEvent(String title, Date theDate, String wktPoint) {
         Geometry geom = wktToGeometry(wktPoint);
 
         if (!geom.getGeometryType().equals("Point")) {
