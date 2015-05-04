@@ -42,8 +42,8 @@ public class App {
 		/**
 		 * TODO Lazy 
 		 */
-		//Event storedEvent = eventDao.findOne(storedEventId);
-		//System.out.println(storedEvent.getPersons().get(0));
+		Event storedEvent = eventDao.getById(storedEventId);
+		System.out.println(storedEvent.getPersons().get(0));
 		
 		Person peter = new Person("Peter", "Sagan");
 		Person nasta = new Person("Nasta", "Kuzminova");
